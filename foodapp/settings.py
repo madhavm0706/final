@@ -32,6 +32,7 @@ AUTH_USER_MODEL= 'webapp.User'
 # Application definition
 
 INSTALLED_APPS = [
+    
     'webapp.apps.WebappConfig',
     'django.contrib.admin',
     'django.contrib.auth',

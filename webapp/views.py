@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import authenticate, login,logout
-from .forms import CustomerSignUpForm,RestuarantSignUpForm,CustomerForm,RestuarantForm
+from .forms import CustomerSignUpForm,RestuarantSignUpForm,Restuarant1SignUpForm,CustomerForm,RestuarantForm,Restuarant1Form
 from django.contrib.auth.decorators import login_required
 from collections import Counter
 from django.urls import reverse
 from django.db.models import Q
-from .models import Customer,Restaurant,Item,Menu,Order,orderItem,User
+from .models import Customer,Restaurant,Restaurant1,Item,Menu,Order,orderItem,User
 
 
 #### ---------- General Side -------------------#####
@@ -17,7 +17,7 @@ def index(request):
 def orderplaced(request):
 	return render(request,'webapp/orderplaced.html',{})
 
-# Showing Restaurants list to Customer
+# Showing Chef list to Customer
 def restuarent(request):
 	r_object = Restaurant.objects.all()
 	query 	= request.GET.get('q')
@@ -25,6 +25,15 @@ def restuarent(request):
 		r_object=Restaurant.objects.filter(Q(rname__icontains=query)).distinct()
 		return render(request,'webapp/restaurents.html',{'r_object':r_object})
 	return render(request,'webapp/restaurents.html',{'r_object':r_object})
+
+# Showing Restaurants list to Chefs
+def restuarent1(request):
+	r1_object = Restaurant1.objects.all()
+	query 	= request.GET.get('q')
+	if query:
+		r1_object=Restaurant1.objects.filter(Q(rname__icontains=query)).distinct()
+		return render(request,'webapp/restaurents1.html',{'r1_object':r1_object})
+	return render(request,'webapp/restaurents1.html',{'r1_object':r1_object})	
 
 
 # logout
@@ -210,7 +219,28 @@ def restRegister(request):
 	context ={
 		'form':form
 	}			
-	return render(request,'webapp/restsignup.html',context)	
+	return render(request,'webapp/restsignup.html',context)
+
+
+# creating Chef account
+def rest1Register(request):
+	form =Restuarant1SignUpForm(request.POST or None)
+	if form.is_valid():
+		user      = form.save(commit=False)
+		username  =	form.cleaned_data['username']
+		password  = form.cleaned_data['password']
+		user.is_restaurant=True
+		user.set_password(password)
+		user.save()
+		user = authenticate(username=username,password=password)
+		if user is not None:
+			if user.is_active:
+				login(request,user)
+				return redirect("r1create")
+	context ={
+		'form':form
+	}			
+	return render(request,'webapp/rest1signup.html',context)		
 
 
 # restuarant login
@@ -224,10 +254,26 @@ def restLogin(request):
 				login(request,user)
 				return redirect("rprofile")
 			else:
-				return render(request,'webapp/restlogin.html',{'error_message':'Your account disable'})
+				return render(request,'webapp/restlogin1.html',{'error_message':'Your account disable'})
 		else:
 			return render(request,'webapp/restlogin.html',{'error_message': 'Invalid Login'})
 	return render(request,'webapp/restlogin.html')
+
+# chef login
+def rest1Login(request):
+	if request.method=="POST":
+		username = request.POST['username']
+		password = request.POST['password']
+		user     = authenticate(username=username,password=password)
+		if user is not None:
+			if user.is_active:
+				login(request,user)
+				return redirect("r1profile")
+			else:
+				return render(request,'webapp/rest1login.html',{'error_message':'Your account disable'})
+		else:
+			return render(request,'webapp/rest1login.html',{'error_message': 'Invalid Login'})
+	return render(request,'webapp/rest1login.html')	
 
 
 # restaurant profile view
@@ -238,6 +284,15 @@ def restaurantProfile(request,pk=None):
 		user=request.user
 	
 	return render(request,'webapp/rest_profile.html',{'user':user})
+
+# restaurant profile view
+def restaurant1Profile(request,pk=None):
+	if pk:
+		user = User.objects.get(pk=pk)
+	else:
+		user=request.user
+	
+	return render(request,'webapp/rest_profile.html',{'user':user})	
 
 # create restaurant detail
 @login_required(login_url='/login/restaurant/')
@@ -254,6 +309,22 @@ def createRestaurant(request):
 	}
 	return render(request,'webapp/rest_profile_form.html',context)
 
+# create restaurant1 detail
+@login_required(login_url='/login/restaurant1/')
+def createRestaurant1(request):
+	form=Restuarant1Form(request.POST or None,request.FILES or None)
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.user = request.user
+		instance.save()
+		return redirect("rprofile")
+	context={
+	'form':form,
+	'title':"Complete Your Restaurant profile"
+	}
+	return render(request,'webapp/rest_profile_form.html',context)
+
+
 #Update restaurant detail
 @login_required(login_url='/login/restaurant/')
 def updateRestaurant(request,id):
@@ -266,6 +337,19 @@ def updateRestaurant(request,id):
 	'title':"Update Your Restaurant profile"
 	}
 	return render(request,'webapp/rest_profile_form.html',context)
+
+#Update restaurant detail
+@login_required(login_url='/login/restaurant1/')
+def updateRestaurant1(request,id):
+	form  	 = Restuarant1Form(request.POST or None,request.FILES or None,instance=request.user.restaurant)
+	if form.is_valid():
+		form.save()
+		return redirect('r1profile')
+	context={
+	'form':form,
+	'title':"Update Your Restaurant1 profile"
+	}
+	return render(request,'webapp/rest1_profile_form.html',context)	
 
 
 # add  menu item for restaurant	
@@ -321,6 +405,8 @@ def menuManipulation(request):
 		"username":request.user.username,
 	}
 	return render(request,'webapp/menu_modify.html',context)
+
+	
 
 def orderlist(request):
 	if request.POST:
