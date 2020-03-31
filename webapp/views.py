@@ -292,7 +292,7 @@ def restaurant1Profile(request,pk=None):
 	else:
 		user=request.user
 	
-	return render(request,'webapp/rest_profile.html',{'user':user})	
+	return render(request,'webapp/rest1_profile.html',{'user':user})	
 
 # create restaurant detail
 @login_required(login_url='/login/restaurant/')
@@ -353,7 +353,7 @@ def updateRestaurant1(request,id):
 
 
 # add  menu item for restaurant	
-@login_required(login_url='/login/restaurant/')		
+@login_required(login_url='/restaurant/menu/')		
 def menuManipulation(request):
 	if not request.user.is_authenticated:
 		return redirect("rlogin") 

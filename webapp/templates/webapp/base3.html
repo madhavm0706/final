@@ -28,12 +28,28 @@
    		 	 <div class="navbar-collapse collapse w-100 dual-collapse2 order-1 order-md-0">
         <ul class="navbar-nav ml-auto text-center">
         
+                {% if request.user.is_authenticated %}
+                <li class="nav-item active">
+                        <a class="nav-link text-light" ><font size="3">&nbsp; <strong style="color: red;"> As Restaurants</strong> </font></a>
+                    </li>
+                <li class="nav-item active">
+                        <a class="nav-link text-light" href="{% url 'index' %}"><font size="3">&nbsp; <strong>Home</strong> </font></a>
+                    </li>
+                <li class="nav-item">
+                      <a class="nav-link text-light" href="{% url  'restuarant' %}"><font size="3">&nbsp;<strong>chefs </strong></font></a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link text-light " href="{% url 'orderlist'%}"><font size="3"> &nbsp;<span aria-hidden="true"></span><strong>Order </strong> </font></a>
+                 
+                {% else %}
+                <li class="nav-item active">
+                        <a class="nav-link text-light" href="{% url 'index' %}"><font size="3">&nbsp; <strong>Home</strong> </font></a>
+                    </li>
+                  
+                  {% endif %}
 
 
-
-            <li class="nav-item active">
-                <a class="nav-link text-light" href="{% url 'index' %}"><font size="3">&nbsp; <strong>Home</strong> </font></a>
-            </li>
+            
             
              
             
@@ -50,9 +66,7 @@
     <div class="navbar-collapse collapse w-100 dual-collapse2 order-2 order-md-2">
         <ul class="navbar-nav mr-auto text-center">
           {% if request.user.is_authenticated %}
-          <li class="nav-item">
-                <a class="nav-link text-light" href="{% url  'mmenu' %}"><font size="3">&nbsp;<strong>chefs </strong></font></a>
-            </li>
+          
             <li class="nav-item">
                 <a class="nav-link text-light " href="{% url 'logout' %}"><font size="3"> &nbsp;<span aria-hidden="true"></span><strong>LogOut </strong> </font></a>
             </li>

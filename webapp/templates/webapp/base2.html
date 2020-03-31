@@ -31,13 +31,27 @@
 
 
 
+            
+            {% if request.user.is_authenticated %}
             <li class="nav-item active">
+                    <a class="nav-link text-light" ><font size="3">&nbsp; <strong style="color: red;"> As Chef</strong> </font></a>
+                </li>
+            <li class="nav-item active">
+                    <a class="nav-link text-light" href="{% url 'index' %}"><font size="3">&nbsp; <strong>Home</strong> </font></a>
+                </li>
+          <li class="nav-item">
+                <a class="nav-link text-light" href="{% url  'restuarant1' %}"><font size="3">&nbsp;<strong>Restaurants</strong></font></a>
+            </li>
+            <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url  'orderlist' %}"><font size="3">&nbsp;<strong>Orders</strong></font></a>
+                </li>
+          
+          {% else %}
+          <li class="nav-item active">
                 <a class="nav-link text-light" href="{% url 'index' %}"><font size="3">&nbsp; <strong>Home</strong> </font></a>
             </li>
-            
-             <li class="nav-item">
-                <a class="nav-link text-light" href="{% url  'restuarant1' %}"><font size="3">&nbsp;<strong>Chefs</strong></font></a>
-            </li>
+            {% endif %}
+             
             
         </ul>
     </div>
@@ -52,6 +66,7 @@
     <div class="navbar-collapse collapse w-100 dual-collapse2 order-2 order-md-2">
         <ul class="navbar-nav mr-auto text-center">
           {% if request.user.is_authenticated %}
+          
           <li class="nav-item">
                 <a class="nav-link text-light" href="{% url  'mmenu' %}"><font size="3">&nbsp;<strong>Menu </strong></font></a>
             </li>

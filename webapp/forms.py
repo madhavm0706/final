@@ -35,7 +35,7 @@ class Restuarant1SignUpForm(forms.ModelForm):
 		fields=['username','email','password']
 		def save(self,commit=True):
 			user=save(commit=False)
-			user.is_restaurant1=True
+			
 			if commit:
 				user.save()
 			return user			
